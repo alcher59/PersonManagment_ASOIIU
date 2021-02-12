@@ -1,0 +1,76 @@
+<div class="container">
+    <form class="card" [formGroup]="form" (ngSubmit)="submit()">
+        <h4>{{title}}</h4>
+
+        <div class="example-button-row">
+            <button mat-flat-button color="primary" type="submit">Сохранить</button>
+        </div>
+
+        <mat-tab-group animationDuration="0ms">
+        <mat-tab label="Главное">
+        <fieldset formGroupName="general">
+
+            <mat-form-field appearance="outline" class="example-full-width" (click)="startdate.open()">
+                <mat-label>Дата приема</mat-label>
+                <input matInput [matDatepicker]="startdate" formControlName="startdate">
+                <mat-datepicker-toggle matSuffix [for]="startdate"></mat-datepicker-toggle>
+                <mat-datepicker #startdate></mat-datepicker>
+                <mat-error *ngIf="form.get('general').get('startdate').invalid && form.get('general').get('startdate').touched">
+                  <span *ngIf="form.get('general').get('startdate').errors.incorrect">Это поле не может быть пустым.</span>
+                </mat-error>
+             </mat-form-field>
+
+             <mat-form-field appearance="outline" class="example-full-width">
+                <mat-label>Должность</mat-label>
+                <mat-select formControlName='position'>
+                  <mat-option *ngFor="let position of (positions$ | async)" [value]="position.Id">
+                    {{position.Name}}
+                  </mat-option>
+                </mat-select>
+                <mat-error *ngIf="form.get('general').get('position').invalid && form.get('general').get('position').touched">
+                  <span *ngIf="form.get('general').get('position').errors.required">
+                    Это поле не может быть пустым.
+                  </span>
+                </mat-error>
+              </mat-form-field>
+          
+              <mat-form-field appearance="outline" class="example-full-width">
+                <mat-label>Подразделение</mat-label>
+                <mat-select formControlName='subdivision'>
+                  <mat-option *ngFor="let unit of (units$ | async)" [value]="unit.Id">
+                    {{unit.Title}}
+                  </mat-option>
+                </mat-select>
+                <mat-error  *ngIf="form.get('general').get('subdivision').invalid && form.get('general').get('subdivision').touched">
+                  <span *ngIf="form.get('general').get('subdivision').errors.required">
+                    Это поле не может быть пустым.
+                  </span>
+                </mat-error>
+              </mat-form-field>
+        </fieldset>
+        </mat-tab>
+        <mat-tab label="Оплата труда">
+        <fieldset formGroupName='salary'>
+            <mat-form-field appearance="outline" class="example-full-width">
+                <mat-label>Колич. ставок</mat-label>
+                <input matInput placeholder="Колич. ставок" formControlName='rates' type="number">
+                <mat-error *ngIf="form.get('salary').get('rates').invalid && form.get('salary').get('rates').touched">
+                  <span *ngIf="form.get('salary').get('rates').errors.required">Это поле не может быть пустым.</span>
+                  <span *ngIf="form.get('salary').get('rates').errors.pattern">
+                      Неверный формат
+                  </span>
+                </mat-error>
+              </mat-form-field>
+    
+              <mat-form-field appearance="outline" class="example-full-width">
+                <mat-label>Оклад(руб.)</mat-label>
+                <input matInput placeholder="Оклад" formControlName='sum' type="number">
+                <mat-error *ngIf="form.get('salary').get('sum').invalid && form.get('salary').get('sum').touched">
+                  <span *ngIf="form.get('salary').get('sum').errors.required">Это поле не может быть пустым.</span>
+                </mat-error>
+              </mat-form-field>
+        </fieldset>
+        </mat-tab>
+        </mat-tab-group>
+    </form>
+</div>

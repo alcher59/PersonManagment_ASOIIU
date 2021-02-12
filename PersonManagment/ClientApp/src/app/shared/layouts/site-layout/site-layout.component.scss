@@ -1,0 +1,26 @@
+.sidenav{
+    top: 65px;
+    list-style: none;
+    padding: 0;
+}
+
+.example-container{
+    height: calc(100vh - 64px);
+}
+
+ul i.material-icons{
+    margin-right: 20px !important;
+}
+
+.nav-link{
+    text-align: start;
+    width: 100%;
+}
+
+ul li.active{
+    color: #673ab7;
+}
+
+.mat-drawer-content{
+    background-color: white;
+}

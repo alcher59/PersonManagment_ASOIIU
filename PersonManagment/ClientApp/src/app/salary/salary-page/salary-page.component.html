@@ -1,0 +1,50 @@
+<div class="page-title">
+    <h4>Зарплата</h4>
+</div>
+
+<ul>
+    <li>
+        <a routerLink="/salary/accruals">Все начисления</a>
+    </li>
+    <li>
+        <a routerLink="/salary/accruals" [queryParams]="{ type: 1 }">Начисление зарплаты</a>
+    </li>
+    <li>
+        <a routerLink="/salary/accruals" [queryParams]="{ type: 5 }">Отпуска</a>
+    </li>
+    <li>
+        <a routerLink="/salary/accruals" [queryParams]="{ type: 4 }">Командировки</a>
+    </li>
+    <li>
+        <a routerLink="/salary/accruals" [queryParams]="{ type: 2 }">Больничные листы</a>
+    </li>
+    <li>
+        <a routerLink="/salary/accruals" [queryParams]="{ type: 3 }">Премии</a>
+    </li>
+</ul>
+
+<h2>Учет времени</h2>
+<ul>
+    <li>
+        <a routerLink="/salary/report">Табели</a>
+    </li>
+</ul>
+
+<h2>Создать</h2>
+<ul>
+    <li>
+        <a routerLink="/salary/accruals/create/salary">Начисление зарплаты</a>
+    </li>
+    <li>
+        <a routerLink="/salary/accruals/create/sick_leave">Больничный лист</a>
+    </li>
+    <li>
+        <a routerLink="/salary/accruals/create/vacation">Отпуск</a>
+    </li>
+    <li>
+        <a routerLink="/salary/accruals/create/business_trip">Командировка</a>
+    </li>
+    <li>
+        <a routerLink="/salary/accruals/create/prize">Премия</a>
+    </li>
+</ul>

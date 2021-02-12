@@ -1,0 +1,48 @@
+<div class="page-title">
+    <h4>Табель</h4>
+</div>
+<div class="row" *ngIf="data; else loader">
+    <div class="col s12">
+        <mat-form-field appearance="fill">
+            <input matInput [matDatepicker]="dp" [(value)]="dateValue">
+            <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
+            <mat-datepicker #dp
+                            startView="year"
+                            (monthSelected)="chosenMonthHandler($event, dp)">
+            </mat-datepicker>
+          </mat-form-field>
+        <div *ngIf="data.length; else empty">
+            <p-table [value]="data" [autoLayout]="true" dataKey="Id">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>Сотрудник</th>
+                        <th *ngFor="let m of months">{{m}}</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-product>
+                    <tr>
+                        <td>{{product.FullName}}</td>
+                        <td *ngFor="let val of product.values; let i = index" pEditableColumn>
+                            <p-cellEditor>
+                                <ng-template pTemplate="input">
+                                    <input pInputText type="text" [(ngModel)]="product.values[i]">
+                                </ng-template>
+                                <ng-template pTemplate="output">
+                                    {{val}}
+                                </ng-template>
+                            </p-cellEditor>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+        <ng-template #empty>
+            <div class="center">
+               Записей пока нет
+            </div>
+        </ng-template>
+    </div>
+</div>
+<ng-template #loader>
+    <app-loader></app-loader>
+</ng-template>

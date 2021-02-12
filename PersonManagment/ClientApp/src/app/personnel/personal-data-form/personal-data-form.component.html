@@ -1,0 +1,114 @@
+<div class="container">
+<form class="card" [formGroup]='form' (ngSubmit)="submit()">
+    <h4>{{title}}</h4>
+    <div class="example-button-row">
+        <button mat-flat-button color="primary" type="submit">Сохранить</button>
+    </div>
+    <mat-form-field appearance="outline" class="example-full-width">
+        <mat-label>Место рождения:</mat-label>
+        <input matInput placeholder="Место рождения" formControlName='place'>
+        <mat-error *ngIf="form.get('place').invalid && form.get('place').touched">
+          <span *ngIf="form.get('place').errors.required">Это поле не может быть пустым.</span>
+        </mat-error>
+      </mat-form-field>
+
+  <h3>Гражданство</h3>
+
+  <mat-form-field appearance="outline" class="example-full-width">
+    <mat-label>Гражданство страны:</mat-label>
+    <mat-select formControlName="country">
+        <mat-option *ngFor="let country of (country$ | async)" [value]="country.Id">
+            {{country.Name}}
+          </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <h3>Документ, удостоверяющий личность</h3>
+
+  <mat-form-field appearance="outline" class="example-full-width">
+    <mat-label>Вид документа:</mat-label>
+    <mat-select formControlName="documentType">
+      <mat-option value="1">Паспорт</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Серия:</mat-label>
+    <input matInput placeholder="Серия" formControlName='series' #series>
+    <mat-hint align="end">{{series.value.length}} / 4</mat-hint>
+    <mat-error *ngIf="form.get('series').invalid && form.get('series').touched">
+      <span *ngIf="form.get('series').errors.required">Это поле не может быть пустым.</span>
+      <span *ngIf="form.get('series').errors.minlength">
+        Значение должно содержать {{form.get('series').errors.minlength.requiredLength}} символа. 
+      </span>
+      <span *ngIf="form.get('series').errors.maxlength">
+        Значение должно содержать {{form.get('series').errors.maxlength.requiredLength}} символа. 
+      </span>
+      <span *ngIf="form.get('series').errors.pattern">
+          Это поле не может содержать буквы
+      </span>
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" style="padding-left: 10px;">
+    <mat-label>Номер:</mat-label>
+    <input matInput placeholder="Номер" formControlName='number' #number>
+    <mat-hint align="end">{{number.value.length}} / 6</mat-hint>
+    <mat-error *ngIf="form.get('number').invalid && form.get('number').touched">
+      <span *ngIf="form.get('number').errors.required">Это поле не может быть пустым.</span>
+      <span *ngIf="form.get('number').errors.minlength">
+        Значение должно содержать {{form.get('number').errors.minlength.requiredLength}} символов. 
+      </span>
+      <span *ngIf="form.get('number').errors.maxlength">
+        Значение должно содержать {{form.get('number').errors.maxlength.requiredLength}} символов. 
+      </span>
+      <span *ngIf="form.get('number').errors.pattern">
+          Это поле не может содержать буквы
+      </span>
+    </mat-error>
+  </mat-form-field>
+  
+  <mat-form-field appearance="outline" class="example-full-width">
+    <mat-label>Кем выдан:</mat-label>
+    <input matInput placeholder="Кем выдан" formControlName='division'>
+    <mat-error *ngIf="form.get('division').invalid && form.get('division').touched">
+      <span *ngIf="form.get('division').errors.required">Это поле не может быть пустым.</span>
+      <span *ngIf="form.get('division').errors.pattern">Поле может содержать только кириллицу</span>
+    </mat-error>
+  </mat-form-field>
+   
+  <mat-form-field appearance="outline" class="example-full-width" (click)="sdate.open()">
+    <mat-label>Дата выдачи:</mat-label>
+    <input matInput [matDatepicker]="sdate" formControlName="sdate">
+    <mat-datepicker-toggle matSuffix [for]="sdate"></mat-datepicker-toggle>
+    <mat-datepicker #sdate></mat-datepicker>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="example-full-width" (click)="validity.open()">
+    <mat-label>Срок действия:</mat-label>
+    <input matInput [matDatepicker]="validity" formControlName="validity">
+    <mat-datepicker-toggle matSuffix [for]="validity"></mat-datepicker-toggle>
+    <mat-datepicker #validity></mat-datepicker>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="example-full-width">
+    <mat-label>Код подразделения:</mat-label>
+    <input matInput placeholder="Код подразделения" formControlName='code' #code>
+    <mat-hint align="end">{{code.value.length}} / 6</mat-hint>
+    <mat-error *ngIf="form.get('code').invalid && form.get('code').touched">
+      <span *ngIf="form.get('code').errors.required">Это поле не может быть пустым.</span>
+      <span *ngIf="form.get('code').errors.minlength">
+        Значение должно содержать {{form.get('code').errors.minlength.requiredLength}} символа. 
+      </span>
+      <span *ngIf="form.get('code').errors.maxlength">
+        Значение должно содержать {{form.get('code').errors.maxlength.requiredLength}} символа. 
+      </span>
+      <span *ngIf="form.get('code').errors.pattern">
+          Это поле не может содержать буквы
+      </span>
+    </mat-error>
+  </mat-form-field>
+
+  </form>
+  </div>
+ 

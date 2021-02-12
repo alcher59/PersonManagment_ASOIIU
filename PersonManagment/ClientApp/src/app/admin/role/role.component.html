@@ -1,0 +1,25 @@
+<div class="page-title">
+    <h4>Роли</h4>
+</div>
+
+<div class="row" *ngIf="roles$ | async as roles; else loader"> 
+    <form [formGroup]="form" (ngSubmit)="submit()">
+        <mat-form-field appearance="outline" class="example-full-width">
+            <input matInput placeholder="Введите наименование роли" formControlName="name" [value]="rolesRef.selectedOptions.selected[0]?.value">
+        </mat-form-field>
+
+    <button mat-flat-button color="primary" type="submit">Добавить</button>
+
+</form> 
+<mat-selection-list #rolesRef [multiple]="false">
+    <mat-list-option *ngFor="let role of roles" [value]="role.Id">
+        {{role.Name}}
+    </mat-list-option>
+</mat-selection-list>
+</div> 
+
+<ng-template #loader>
+    <app-loader></app-loader>
+</ng-template>
+
+

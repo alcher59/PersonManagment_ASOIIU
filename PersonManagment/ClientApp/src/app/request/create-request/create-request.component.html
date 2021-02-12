@@ -1,0 +1,109 @@
+<div class="container">
+  <form class="card" [formGroup]="form" (ngSubmit)="submit()">
+    <h4>{{title}}</h4>
+      <div class="example-button-row">
+         <button mat-flat-button color="primary" type="submit">Сохранить</button>
+         <button mat-flat-button color="warn" type="button" (click)="complete()">Завершить</button>
+         <button mat-flat-button color="warn" type="button" (click)="delete()" *ngIf="!isNew">Удалить</button>
+      </div>
+
+     <fieldset formGroupName="general">
+            <mat-form-field appearance="outline" class="example-full-width">
+                <mat-label>Заголовок</mat-label>
+                <input matInput placeholder="Заголовок" formControlName='heading'>
+                <mat-error *ngIf="form.get('general').get('heading').invalid && form.get('general').get('heading').touched">
+                  <span *ngIf="form.get('general').get('heading').errors.required">Это поле не может быть пустым.</span>
+                </mat-error>
+              </mat-form-field>
+    
+              <mat-form-field appearance="outline" class="example-full-width">
+                <mat-label>Сотрудник</mat-label>
+                <mat-select formControlName='employee'>
+                  <mat-option *ngFor="let employee of (employees$ | async)" [value]="employee.Id">
+                    {{employee.FullName}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="form-width" (click)="periodOfExecution.open()">
+                <mat-label>Срок исполнения</mat-label>
+                <input matInput [matDatepicker]="periodOfExecution" formControlName="periodOfExecution">
+                <mat-datepicker-toggle matSuffix [for]="periodOfExecution"></mat-datepicker-toggle>
+                <mat-datepicker #periodOfExecution></mat-datepicker>
+              </mat-form-field>
+
+     </fieldset>
+     <fieldset formGroupName="work">
+
+          <mat-form-field appearance="outline" class="example-full-width">
+            <mat-label>Категория:</mat-label>
+            <mat-select formControlName="category">
+              <mat-option value="1">Диагностика</mat-option>
+              <mat-option value="2">Профилактика</mat-option>
+              <mat-option value="3">Ремонт</mat-option>
+            </mat-select>
+            <mat-error *ngIf="form.get('work').get('category').invalid && form.get('work').get('category').touched">
+              <span *ngIf="form.get('work').get('category').errors.required">Это поле не может быть пустым.</span>
+            </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="example-full-width">
+            <mat-label>Описание</mat-label>
+            <input matInput placeholder="Описание" formControlName='description'>
+            <mat-error *ngIf="form.get('work').get('description').invalid && form.get('work').get('description').touched">
+              <span *ngIf="form.get('work').get('description').errors.required">Это поле не может быть пустым.</span>
+            </mat-error>
+          </mat-form-field>
+
+        </fieldset>
+        <fieldset formGroupName="equipment">
+          
+          <!-- <mat-form-field appearance="outline" class="example-full-width">
+            <mat-label>Категория оборудования:</mat-label>
+            <mat-select formControlName="e_category">
+              <mat-option value="2">Сетевое</mat-option>
+              <mat-option value="3">Вспомогательное</mat-option>
+              <mat-option value="4">Компьютер</mat-option>
+            </mat-select>
+          </mat-form-field> -->
+
+        <!-- <mat-form-field appearance="outline" class="example-full-width">
+          <mat-label>Количество</mat-label>
+          <input matInput placeholder="Количество" formControlName='e_quantity' type='number'>
+          <mat-error *ngIf="form.get('equipment').get('e_quantity').invalid && form.get('equipment').get('e_quantity').touched">
+            <span *ngIf="form.get('equipment').get('e_quantity').errors.required">Это поле не может быть пустым.</span>
+          </mat-error>
+        </mat-form-field> -->
+
+        <!-- <mat-form-field appearance="outline" class="example-full-width">
+          <mat-label>Описание</mat-label>
+          <input matInput placeholder="Описание" formControlName='e_description'>
+          <mat-error *ngIf="form.get('equipment').get('e_description').invalid && form.get('equipment').get('e_description').touched">
+            <span *ngIf="form.get('equipment').get('e_description').errors.required">Это поле не может быть пустым.</span>
+          </mat-error>
+        </mat-form-field> -->
+
+      </fieldset>
+
+      <fieldset formGroupName="stationery">
+
+        <!-- <mat-form-field appearance="outline" class="example-full-width">
+          <mat-label>Категория товара:</mat-label>
+          <mat-select formControlName="s_category">
+            <mat-option value="2">Бумажная продукция</mat-option>
+            <mat-option value="3">Пишущие принадлежности</mat-option>
+            <mat-option value="4">Архивы и органайзеры</mat-option>
+          </mat-select>
+       </mat-form-field> -->
+
+      <mat-form-field appearance="outline" class="example-full-width">
+        <mat-label>Количество</mat-label>
+        <input matInput placeholder="Количество" formControlName='quantity' type='number'>
+        <mat-error *ngIf="form.get('stationery').get('quantity').invalid && form.get('stationery').get('quantity').touched">
+          <span *ngIf="form.get('stationery').get('quantity').errors.required">Это поле не может быть пустым.</span>
+        </mat-error>
+      </mat-form-field>
+
+      </fieldset>
+  </form>
+</div>

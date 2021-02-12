@@ -1,0 +1,33 @@
+<div class="container">
+    <form class="card" [formGroup]="form" (ngSubmit)="submit()">
+
+          <h4>{{title}}</h4>
+          <div class="example-button-row">
+        <button mat-flat-button color="primary" type="submit">Сохранить</button>
+        </div>
+        
+        <fieldset formGroupName="general">
+          <mat-form-field appearance="outline" class="example-full-width" (click)="dismissaldate.open()">
+            <mat-label>Дата увольнения:</mat-label>
+            <input matInput [matDatepicker]="dismissaldate" formControlName="dismissaldate">
+            <mat-datepicker-toggle matSuffix [for]="dismissaldate"></mat-datepicker-toggle>
+            <mat-datepicker #dismissaldate></mat-datepicker>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="example-full-width" (click)="datep.open()">
+            <mat-label>Дата приказа:</mat-label>
+            <input matInput [matDatepicker]="datep" formControlName="datep">
+            <mat-datepicker-toggle matSuffix [for]="datep"></mat-datepicker-toggle>
+            <mat-datepicker #datep></mat-datepicker>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="example-full-width">
+            <mat-label>Основание:</mat-label>
+            <mat-select formControlName="base">
+              <mat-option *ngFor="let it of causes" [value]="it.id">{{it.text}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          </fieldset>
+
+  </form>
+</div>

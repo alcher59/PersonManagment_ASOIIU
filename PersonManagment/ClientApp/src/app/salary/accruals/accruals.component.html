@@ -1,0 +1,75 @@
+<div class="page-title">
+    <h4>{{title}}</h4>
+    <div>
+        <button *ngIf="this.docType == -1" mat-flat-button color="primary" type="button" [matMenuTriggerFor]="menu">Создать</button>
+        <mat-menu #menu="matMenu">
+            <button mat-menu-item color="accent" routerLink="/salary/accruals/create/salary">Начисление зарплаты</button>
+            <button mat-menu-item color="accent" routerLink="/salary/accruals/create/vacation">Отпуск</button>
+            <button mat-menu-item color="accent" routerLink="/salary/accruals/create/business_trip">Коммандировка</button>
+            <button mat-menu-item color="accent" routerLink="/salary/accruals/create/sick_leave">Больничный лист</button>
+            <button mat-menu-item color="accent" routerLink="/salary/accruals/create/prize">Премия</button>
+        </mat-menu>
+        <button *ngIf="this.docType != -1" mat-flat-button color="primary" type="button" (click)="toCreateForm()">Создать</button>
+    </div>
+</div>
+
+<div class="row" *ngIf="accruals$ | async as employees; else loader">
+    <div class="col s12">
+        <div *ngIf="employees.length; else empty">
+            <table mat-table [dataSource]="employees" matSort class="mat-elevation-z8">
+
+                <ng-container matColumnDef="id">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Id </th>
+                    <td mat-cell *matCellDef="let row"> {{row.id}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="dateOfCreation">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Дата </th>
+                    <td mat-cell *matCellDef="let row"> {{row.dateOfCreation * 1000 | date:'dd.MM.yyyy'}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="number">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Номер </th>
+                    <td mat-cell *matCellDef="let row"> {{row.number}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="documentAccruals">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Тип документа </th>
+                    <td mat-cell *matCellDef="let row"> {{row.documentAccruals}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="accrued">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Начислено </th>
+                    <td mat-cell *matCellDef="let row"> {{row.accrued}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="withheld">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Удержано </th>
+                    <td mat-cell *matCellDef="let row"> {{row.withheld}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="employees">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Сотрудник </th>
+                    <td mat-cell *matCellDef="let row"> {{row.employees}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="comment">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Комментарий </th>
+                    <td mat-cell *matCellDef="let row"> {{row.comment}} </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;" [routerLink]="'/salary/accruals/create/' + row.Id" class="row-hover"></tr>
+            </table>
+        </div>
+        <ng-template #empty>
+            <div class="center">
+                Начислений пока нет
+            </div>
+        </ng-template>
+    </div>
+</div>
+
+<ng-template #loader>
+    <app-loader></app-loader>
+</ng-template>

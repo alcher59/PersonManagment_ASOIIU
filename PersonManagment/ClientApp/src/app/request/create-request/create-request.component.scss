@@ -1,0 +1,47 @@
+
+  p {
+    font-size: 1.5rem;
+  }
+.btn{
+  margin: 10px;
+}
+
+form {
+  padding: 20px;
+}
+
+small{
+  color: red;
+}
+
+.example-full-width {
+  width: 100%;
+}
+
+:host tr {
+  border-bottom: none !important;
+}
+fieldset{
+  border: none;
+}
+h4 {
+  font-size: 2rem;
+  line-height: 110%;
+  margin: 1.52rem 0 .912rem 0;
+}
+
+.example-button-row {
+  display: table-cell;
+}
+
+.example-button-row .mat-button-base {
+  margin: 8px 8px 8px 0;
+}
+
+input {
+  border-bottom: none !important;
+}
+.form-width {
+  width: 550px;
+  margin: 10px;
+}
