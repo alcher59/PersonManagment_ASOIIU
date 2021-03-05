@@ -425,8 +425,11 @@ namespace PersonManagment.Data.PersonManagmentData
         }
 
 
-        public byte[] GenerateVacationShedule()
+        public fileToSend GenerateVacationShedule()
         {
+            fileToSend file = new fileToSend();
+            file.name = "raspisanie otpuskov";
+            file.mime = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
             using (var stream = new MemoryStream())
             using (SpreadsheetDocument document = SpreadsheetDocument.Create(stream, SpreadsheetDocumentType.Workbook))
             {
@@ -494,11 +497,10 @@ namespace PersonManagment.Data.PersonManagmentData
                 workbookPart.Workbook.Save();
                 document.Close();
 
-                //сохранить файл
-                //File.WriteAllBytes("path\\график отпусков.xlsx", stream.ToArray());
-
-                return stream.ToArray();
+                file.data = stream.ToArray();
             }
+
+            return file;
         }
 
         public byte[] GetDocumentFormById(int id) //id названия документа (актуальная версия)

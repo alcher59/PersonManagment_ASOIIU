@@ -21,7 +21,7 @@ namespace PersonManagment.Controllers
         /// Метод получения личной карточки сотрудника Word
         /// </summary>   
         [HttpGet]
-        [Route("ExportEmployeeCard/{employeeId}")]
+        [Route("ExportEmployeeCard")]
         public IActionResult ExportEmployeeCard(int employeeId)
         {
             try
@@ -39,7 +39,7 @@ namespace PersonManagment.Controllers
         /// Метод получения табеля за месяц в виде Excel
         /// </summary>   
         [HttpGet]
-        [Route("SaveTimeSheet/{date}")]
+        [Route("SaveTimeSheet")]
         public IActionResult SaveTimeSheet(int date)
         {
             try
@@ -56,14 +56,15 @@ namespace PersonManagment.Controllers
         /// <summary>
         /// Сохранить документ о расписании отпусков
         /// </summary>
-        [HttpPost]
+        [HttpGet]
         [Route("SaveVacationShedule")]
         public IActionResult SaveVacationShedule()
         {
             try
             {
-                var res = _repository.GenerateVacationShedule();
-                return Ok(res);
+                fileToSend res = _repository.GenerateVacationShedule();
+                return File(res.data, res.mime, res.name);
+                //return Ok(res);
             }
             catch (Exception error)
             {
