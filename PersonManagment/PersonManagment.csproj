@@ -13,6 +13,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="BerndRuecker.Sample.CamundaClient" Version="0.1.1" />
+    <PackageReference Include="Camunda.Api.Client" Version="2.6.0" />
     <PackageReference Include="ClosedXML" Version="0.95.3" />
     <PackageReference Include="DocumentFormat.OpenXml" Version="2.11.3" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.6" />

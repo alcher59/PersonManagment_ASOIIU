@@ -1,19 +1,25 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using PersonManagment.Data.DataModel;
 using PersonManagment.Data.Models;
 using PersonManagment.Data.PersonManagmentData;
 using System;
 
+
 namespace PersonManagment.Controllers
 {
+    
     [Route("api/[controller]")]
     [ApiController]
     public class RecruitmentController : ControllerBase
     {
         private readonly RecruitmentData _repository;
+       
+
         public RecruitmentController(ApplicationDbContext context)
         {
             _repository = new RecruitmentData(context);
+            
         }
 
         [HttpGet]
@@ -23,6 +29,8 @@ namespace PersonManagment.Controllers
             {
                 var res = _repository.GetRecruitment();
 
+
+                
                 return Ok(res);
             }
             catch (Exception error)

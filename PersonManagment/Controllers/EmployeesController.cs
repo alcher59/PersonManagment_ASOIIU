@@ -4,11 +4,15 @@ using PersonManagment.Data.DataModel;
 using PersonManagment.Data.Models;
 using PersonManagment.Data.PersonManagmentData;
 using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
 
 namespace PersonManagment.Controllers
 {
     [Route("api/[controller]")]
-    [Authorize]
+    //[Authorize]
+    [AllowAnonymous]
     [ApiController]
     public class EmployeesController : ControllerBase
     {
