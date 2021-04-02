@@ -1,38 +1,295 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1sjummb" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.6.0">
-  <bpmn:process id="Recruitment" name="Приём на работу" isExecutable="true">
-    <bpmn:startEvent id="StartEvent_1">
-      <bpmn:outgoing>Flow_0jr4w8c</bpmn:outgoing>
-    </bpmn:startEvent>
-    <bpmn:endEvent id="Event_1b7th9k">
-      <bpmn:incoming>Flow_0qz52yz</bpmn:incoming>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1b5q64a" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.6.0">
+  <bpmn:collaboration id="main">
+    <bpmn:participant id="Participant_07io56k" name="Отдел кадров" processRef="Recruitment" />
+  </bpmn:collaboration>
+  <bpmn:process id="Recruitment" name="Трудоустройство" isExecutable="true">
+    <bpmn:exclusiveGateway id="militaryId" name="Есть военный билет?">
+      <bpmn:incoming>Flow_1riefyf</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ynbco6</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1x7haw0</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="Event_17a8916">
+      <bpmn:incoming>Flow_1x7haw0</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:sequenceFlow id="Flow_0jr4w8c" sourceRef="StartEvent_1" targetRef="GetEmployees" />
-    <bpmn:sequenceFlow id="Flow_0qz52yz" sourceRef="GetEmployees" targetRef="Event_1b7th9k" />
-    <bpmn:serviceTask id="GetEmployees" name="GetEmployees" camunda:type="external" camunda:topic="GetEmployees">
-      <bpmn:incoming>Flow_0jr4w8c</bpmn:incoming>
-      <bpmn:outgoing>Flow_0qz52yz</bpmn:outgoing>
+    <bpmn:dataStoreReference id="DataStoreReference_1o6uacm" />
+    <bpmn:endEvent id="Event_0wxoeqf">
+      <bpmn:incoming>Flow_0xxahg4</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:userTask id="createRecruitment" name="Оформить приём на работу">
+      <bpmn:incoming>Flow_0q5b4m1</bpmn:incoming>
+      <bpmn:incoming>Flow_03eelp8</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ysesvk</bpmn:outgoing>
+      <bpmn:dataOutputAssociation id="DataOutputAssociation_03bc5xa">
+        <bpmn:targetRef>DataStoreReference_1o6uacm</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="createContract" name="Создать трудовой договор" camunda:type="external" camunda:topic="printContract">
+      <bpmn:incoming>Flow_0ysesvk</bpmn:incoming>
+      <bpmn:outgoing>Flow_15gpsbs</bpmn:outgoing>
+      <bpmn:dataOutputAssociation id="DataOutputAssociation_1t4bmyr">
+        <bpmn:targetRef>DataStoreReference_1o6uacm</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
     </bpmn:serviceTask>
+    <bpmn:serviceTask id="printContract" name="Распечатать труд. договора" camunda:expression="printRecruitment">
+      <bpmn:incoming>Flow_15gpsbs</bpmn:incoming>
+      <bpmn:outgoing>Flow_13eyb36</bpmn:outgoing>
+      <bpmn:property id="Property_18x3o00" name="__targetRef_placeholder" />
+      <bpmn:dataInputAssociation id="DataInputAssociation_1edzknw">
+        <bpmn:sourceRef>DataStoreReference_1o6uacm</bpmn:sourceRef>
+        <bpmn:targetRef>Property_18x3o00</bpmn:targetRef>
+      </bpmn:dataInputAssociation>
+    </bpmn:serviceTask>
+    <bpmn:userTask id="createAccount" name="Создать аккаунт">
+      <bpmn:incoming>Flow_13eyb36</bpmn:incoming>
+      <bpmn:outgoing>Flow_0xxahg4</bpmn:outgoing>
+      <bpmn:dataOutputAssociation id="DataOutputAssociation_1ax48qy">
+        <bpmn:targetRef>DataStoreReference_1o6uacm</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
+    </bpmn:userTask>
+    <bpmn:userTask id="insertEmployee" name="Занести данные о сотруднике">
+      <bpmn:incoming>Flow_06v2mba</bpmn:incoming>
+      <bpmn:outgoing>Flow_0q5b4m1</bpmn:outgoing>
+      <bpmn:dataOutputAssociation id="DataOutputAssociation_0fj7w0l">
+        <bpmn:targetRef>DataStoreReference_1o6uacm</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="Gateway_1jfr6i4" name="Есть такой сотрудник?">
+      <bpmn:incoming>Flow_1ynbco6</bpmn:incoming>
+      <bpmn:incoming>Flow_0h8dpte</bpmn:incoming>
+      <bpmn:outgoing>Flow_06v2mba</bpmn:outgoing>
+      <bpmn:outgoing>Flow_03eelp8</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="militaryLiable" name="Сотрудник военнообязанный?">
+      <bpmn:incoming>Flow_1b5ywds</bpmn:incoming>
+      <bpmn:outgoing>Flow_1riefyf</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0h8dpte</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:startEvent id="Event_0yim169">
+      <bpmn:outgoing>Flow_015ycph</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:userTask id="CheckInfo" name="Проверить документы">
+      <bpmn:incoming>Flow_015ycph</bpmn:incoming>
+      <bpmn:outgoing>Flow_1b5ywds</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_03eelp8" name="Да" sourceRef="Gateway_1jfr6i4" targetRef="createRecruitment">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${emp == true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_06v2mba" name="Нет" sourceRef="Gateway_1jfr6i4" targetRef="insertEmployee">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${emp == false}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_15gpsbs" sourceRef="createContract" targetRef="printContract" />
+    <bpmn:sequenceFlow id="Flow_13eyb36" sourceRef="printContract" targetRef="createAccount" />
+    <bpmn:sequenceFlow id="Flow_0ysesvk" sourceRef="createRecruitment" targetRef="createContract" />
+    <bpmn:sequenceFlow id="Flow_0xxahg4" sourceRef="createAccount" targetRef="Event_0wxoeqf" />
+    <bpmn:sequenceFlow id="Flow_015ycph" sourceRef="Event_0yim169" targetRef="CheckInfo" />
+    <bpmn:sequenceFlow id="Flow_0h8dpte" name="Нет" sourceRef="militaryLiable" targetRef="Gateway_1jfr6i4">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${man == false}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1riefyf" name="Да" sourceRef="militaryLiable" targetRef="militaryId">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${man == true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0q5b4m1" sourceRef="insertEmployee" targetRef="createRecruitment" />
+    <bpmn:sequenceFlow id="Flow_1ynbco6" name="Да" sourceRef="militaryId" targetRef="Gateway_1jfr6i4">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${militaryDoc == true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1x7haw0" name="Нет" sourceRef="militaryId" targetRef="Event_17a8916">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${militaryDoc == false}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1b5ywds" sourceRef="CheckInfo" targetRef="militaryLiable" />
+    <bpmn:textAnnotation id="TextAnnotation_1ynmxu3">
+      <bpmn:text>НОЦ ГиРНГМ: Управление персоналом</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_0qtwobu" sourceRef="createRecruitment" targetRef="TextAnnotation_1ynmxu3" />
+    <bpmn:association id="Association_0r6qhh9" sourceRef="createContract" targetRef="TextAnnotation_1ynmxu3" />
+    <bpmn:association id="Association_0hcuudg" sourceRef="printContract" targetRef="TextAnnotation_1ynmxu3" />
+    <bpmn:association id="Association_1bloa6l" sourceRef="createAccount" targetRef="TextAnnotation_1ynmxu3" />
+    <bpmn:association id="Association_09tuz3j" sourceRef="insertEmployee" targetRef="TextAnnotation_1ynmxu3" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
-    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Recruitment">
-      <bpmndi:BPMNEdge id="Flow_0qz52yz_di" bpmnElement="Flow_0qz52yz">
-        <di:waypoint x="410" y="117" />
-        <di:waypoint x="512" y="117" />
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="main">
+      <bpmndi:BPMNShape id="Participant_07io56k_di" bpmnElement="Participant_07io56k" isHorizontal="true">
+        <dc:Bounds x="160" y="50" width="1560" height="370" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1ynmxu3_di" bpmnElement="TextAnnotation_1ynmxu3">
+        <dc:Bounds x="1030" y="313" width="100" height="53" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_03eelp8_di" bpmnElement="Flow_03eelp8">
+        <di:waypoint x="730" y="225" />
+        <di:waypoint x="730" y="170" />
+        <di:waypoint x="1010" y="170" />
+        <di:waypoint x="1010" y="210" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="753" y="152" width="13" height="14" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0jr4w8c_di" bpmnElement="Flow_0jr4w8c">
-        <di:waypoint x="215" y="117" />
-        <di:waypoint x="310" y="117" />
+      <bpmndi:BPMNEdge id="Flow_06v2mba_di" bpmnElement="Flow_06v2mba">
+        <di:waypoint x="755" y="250" />
+        <di:waypoint x="820" y="250" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="778" y="232" width="20" height="14" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
-        <dc:Bounds x="179" y="99" width="36" height="36" />
+      <bpmndi:BPMNEdge id="Flow_15gpsbs_di" bpmnElement="Flow_15gpsbs">
+        <di:waypoint x="1200" y="250" />
+        <di:waypoint x="1240" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_13eyb36_di" bpmnElement="Flow_13eyb36">
+        <di:waypoint x="1340" y="250" />
+        <di:waypoint x="1380" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ysesvk_di" bpmnElement="Flow_0ysesvk">
+        <di:waypoint x="1060" y="250" />
+        <di:waypoint x="1100" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0xxahg4_di" bpmnElement="Flow_0xxahg4">
+        <di:waypoint x="1480" y="250" />
+        <di:waypoint x="1522" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_015ycph_di" bpmnElement="Flow_015ycph">
+        <di:waypoint x="238" y="250" />
+        <di:waypoint x="290" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0h8dpte_di" bpmnElement="Flow_0h8dpte">
+        <di:waypoint x="480" y="275" />
+        <di:waypoint x="480" y="340" />
+        <di:waypoint x="730" y="340" />
+        <di:waypoint x="730" y="275" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="450" y="293" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1riefyf_di" bpmnElement="Flow_1riefyf">
+        <di:waypoint x="505" y="250" />
+        <di:waypoint x="575" y="250" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="509" y="232" width="13" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0q5b4m1_di" bpmnElement="Flow_0q5b4m1">
+        <di:waypoint x="920" y="250" />
+        <di:waypoint x="960" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ynbco6_di" bpmnElement="Flow_1ynbco6">
+        <di:waypoint x="625" y="250" />
+        <di:waypoint x="705" y="250" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="637" y="228" width="13" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1x7haw0_di" bpmnElement="Flow_1x7haw0">
+        <di:waypoint x="600" y="225" />
+        <di:waypoint x="600" y="140" />
+        <di:waypoint x="682" y="140" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="610" y="203" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1b5ywds_di" bpmnElement="Flow_1b5ywds">
+        <di:waypoint x="390" y="250" />
+        <di:waypoint x="455" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Gateway_05dst2c_di" bpmnElement="militaryId" isMarkerVisible="true">
+        <dc:Bounds x="575" y="225" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="564" y="286" width="71" height="27" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1b7th9k_di" bpmnElement="Event_1b7th9k">
-        <dc:Bounds x="512" y="99" width="36" height="36" />
+      <bpmndi:BPMNShape id="Event_17a8916_di" bpmnElement="Event_17a8916">
+        <dc:Bounds x="682" y="122" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="360" y="922" width="20" height="14" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0scqvwi_di" bpmnElement="GetEmployees">
-        <dc:Bounds x="310" y="77" width="100" height="80" />
+      <bpmndi:BPMNShape id="DataStoreReference_1o6uacm_di" bpmnElement="DataStoreReference_1o6uacm">
+        <dc:Bounds x="1095" y="95" width="50" height="50" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0wxoeqf_di" bpmnElement="Event_0wxoeqf">
+        <dc:Bounds x="1522" y="232" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1i3z00j_di" bpmnElement="createRecruitment">
+        <dc:Bounds x="960" y="210" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1n9lc85_di" bpmnElement="createContract">
+        <dc:Bounds x="1100" y="210" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1hse91z_di" bpmnElement="printContract">
+        <dc:Bounds x="1240" y="210" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1fze6vz_di" bpmnElement="createAccount">
+        <dc:Bounds x="1380" y="210" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1qo8kud_di" bpmnElement="insertEmployee">
+        <dc:Bounds x="820" y="210" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1jfr6i4_di" bpmnElement="Gateway_1jfr6i4" isMarkerVisible="true">
+        <dc:Bounds x="705" y="225" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="741" y="266" width="58" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_04vbnxc_di" bpmnElement="militaryLiable" isMarkerVisible="true">
+        <dc:Bounds x="455" y="225" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="437" y="175" width="86" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0yim169_di" bpmnElement="Event_0yim169">
+        <dc:Bounds x="202" y="232" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1clihcr_di" bpmnElement="CheckInfo">
+        <dc:Bounds x="290" y="210" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_0qtwobu_di" bpmnElement="Association_0qtwobu">
+        <di:waypoint x="990" y="290" />
+        <di:waypoint x="990" y="333" />
+        <di:waypoint x="1030" y="333" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0r6qhh9_di" bpmnElement="Association_0r6qhh9">
+        <di:waypoint x="1100" y="280" />
+        <di:waypoint x="1070" y="280" />
+        <di:waypoint x="1070" y="313" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0hcuudg_di" bpmnElement="Association_0hcuudg">
+        <di:waypoint x="1290" y="290" />
+        <di:waypoint x="1290" y="340" />
+        <di:waypoint x="1130" y="340" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1bloa6l_di" bpmnElement="Association_1bloa6l">
+        <di:waypoint x="1430" y="290" />
+        <di:waypoint x="1430" y="330" />
+        <di:waypoint x="1130" y="330" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_09tuz3j_di" bpmnElement="Association_09tuz3j">
+        <di:waypoint x="900" y="290" />
+        <di:waypoint x="900" y="340" />
+        <di:waypoint x="1030" y="340" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataOutputAssociation_03bc5xa_di" bpmnElement="DataOutputAssociation_03bc5xa">
+        <di:waypoint x="1030" y="210" />
+        <di:waypoint x="1030" y="170" />
+        <di:waypoint x="1095" y="138" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataOutputAssociation_1t4bmyr_di" bpmnElement="DataOutputAssociation_1t4bmyr">
+        <di:waypoint x="1150" y="210" />
+        <di:waypoint x="1150" y="170" />
+        <di:waypoint x="1131" y="145" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataOutputAssociation_1ax48qy_di" bpmnElement="DataOutputAssociation_1ax48qy">
+        <di:waypoint x="1430" y="210" />
+        <di:waypoint x="1430" y="115" />
+        <di:waypoint x="1145" y="115" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataOutputAssociation_0fj7w0l_di" bpmnElement="DataOutputAssociation_0fj7w0l">
+        <di:waypoint x="900" y="210" />
+        <di:waypoint x="900" y="125" />
+        <di:waypoint x="1095" y="125" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataInputAssociation_1edzknw_di" bpmnElement="DataInputAssociation_1edzknw">
+        <di:waypoint x="1145" y="120" />
+        <di:waypoint x="1280" y="120" />
+        <di:waypoint x="1280" y="210" />
+      </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>

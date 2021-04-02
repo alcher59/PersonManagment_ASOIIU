@@ -1,11 +1,18 @@
 ﻿using CamundaClient;
 using CamundaClient.Dto;
+
+using Newtonsoft.Json;
 using PersonManagment.Data.DataModel;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Net;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using static PersonManagment.Data.PersonManagmentData.EmployeeData;
+using static System.Net.WebRequestMethods;
 
 namespace PersonManagment.Data.PersonManagmentData
 {
@@ -19,6 +26,7 @@ namespace PersonManagment.Data.PersonManagmentData
 
         private static string workerId = "worker1";
         private static IDictionary<string, Action<ExternalTask>> workers = new Dictionary<string, Action<ExternalTask>>();
+       
 
         public CamundaEngineClient camunda;
         public CamundaData(ApplicationDbContext context)
@@ -29,19 +37,100 @@ namespace PersonManagment.Data.PersonManagmentData
         }
         private readonly ApplicationDbContext _context;
 
-        public void DeployModel()
+        public Dictionary<string, string> StartProcess(string processName)
         {
-            camunda.RepositoryService.Deploy("Recruitment", new List<object> {
-                FileParameter.FromManifestResource(Assembly.GetExecutingAssembly(), "PersonManagment.Data.BPMN.Recruitment.bpmn") });
+            string deploymentId = DeployModel(processName); //определяем выполняемую модель
+            RegisterWorker();
+
+            // start some instances:
+            string processInstanceId = camunda.BpmnWorkflowService.StartProcessInstance(processName, new Dictionary<string, object>()
+                    {
+                        //{"militaryDoc", "true" },
+                        //{"man", "true" },
+                        //{"emp", "false" }
+                        //{"test", "false" }
+                    });
+            var definitions = camunda.RepositoryService.LoadProcessDefinitions(true);
+            return new Dictionary<string, string>()
+                    {
+                        {"deploymentId", deploymentId },
+                        {"processInstanceId", processInstanceId }
+                    };
+        }
+        public void CompleteUserTask(TaskModel taskInfo)
+        {
+            var tasks = camunda.HumanTaskService.LoadTasks();
+            var taskId = string.Empty;
+            for (int i = 0; i < tasks.Count; i++)
+            {
+                if (tasks[i].Name == taskInfo.taskName && tasks[i].ProcessInstanceId == taskInfo.processInstanceId)
+                {
+                    taskId = tasks[i].Id;
+                }
+            }
+            var variables = camunda.HumanTaskService.LoadVariables(taskId);
+            foreach(var v in taskInfo.variables)
+            {
+                variables.Add(v.key, v.value);
+            }
+            //variables.Add("emp", "false");
+            //variables.Add("militaryDoc", "true");
+            camunda.HumanTaskService.Complete(taskId, variables);
+        }
+
+        //public void start_test(string nameDefinition)
+        //{
+        //    var processDefinitions = camunda.RepositoryService.LoadProcessDefinitions(true);
+        //    ProcessDefinition processDefinition = new ProcessDefinition();
+        //    foreach (var def in processDefinitions)
+        //    {
+        //        if (def.Name == nameDefinition) processDefinition = def;
+        //    }
+        //    if (processDefinition == null || processDefinition.StartFormKey == null)
+        //    {
+        //        return;
+        //    }
+        //    Activator.CreateInstance(Type.GetType(processDefinition.StartFormKey));
+        //}
+
+        public string DeployModel(string processName)
+        {
+            if (processName != null)
+            {
+                return camunda.RepositoryService.Deploy(processName, new List<object> {
+                FileParameter.FromManifestResource(Assembly.GetExecutingAssembly(), $"PersonManagment.Data.BPMN.{processName}.bpmn") });
+            }
+            else return string.Empty;
         }
 
         public void RegisterWorker()
         {
-            registerWorker("GetEmployees", externalTask => {
-                //Console.WriteLine("Get employees now..."); // e.g. by calling a REST endpoint
+            //registerWorkers("GetEmployees", externalTask =>
+            //{
+            //    //HttpWebRequest getRequest = (HttpWebRequest)WebRequest.Create("http://localhost:63578/api/Employees");
+
+            //    //getRequest.Method = Http.Get;
+
+            //    //var getResponse = (HttpWebResponse)getRequest.GetResponse();
+
+            //    //Stream newStream = getResponse.GetResponseStream();
+
+            //    //StreamReader sr = new StreamReader(newStream);
+
+            //    //var result = sr.ReadToEnd();
+
+            //    //IEnumerable<EmployeeDataModel> deserializedObjects = JsonConvert.DeserializeObject<IEnumerable<EmployeeDataModel>>(result);
+
+            //    camunda.ExternalTaskService.Complete(workerId, externalTask.Id);
+            //});
+            registerWorkers("printContract", externalTask =>
+            {
                 camunda.ExternalTaskService.Complete(workerId, externalTask.Id);
             });
-
+            registerWorkers("printRecruitment", externalTask =>
+            {
+                camunda.ExternalTaskService.Complete(workerId, externalTask.Id);
+            });
             StartPolling();
         }
 
@@ -56,21 +145,43 @@ namespace PersonManagment.Data.PersonManagmentData
             Parallel.ForEach(
                 tasks,
                 new ParallelOptions { MaxDegreeOfParallelism = pollingMaxDegreeOfParallelism },
-                (externalTask) => {
+                (externalTask) =>
+                {
                     workers[externalTask.TopicName](externalTask);
                 });
 
-            // schedule next run
             pollingTimer.Change(pollingIntervalInMilliseconds, Timeout.Infinite);
         }
 
-        public void registerWorker(string topicName, Action<ExternalTask> workerFunction)
+
+
+        public void registerWorkers(string topicName, Action<ExternalTask> workerFunction)
         {
             workers.Add(topicName, workerFunction);
         }
-        public void Shutdown()
+        public void StopProcess()
         {
-            camunda.Shutdown();
+            //camunda.Shutdown();
+            //camunda.RepositoryService.DeleteDeployment(deploymentId);
         }
+
+        
+    }
+
+    public class TaskModel
+    {
+        public string processInstanceId { get; set; }
+
+        public string taskName { get; set; }
+
+        public VariablesModel[] variables { get; set; }
+
+    }
+
+    public class VariablesModel
+    {
+        public string key { get; set; }
+
+        public object value { get; set; }
     }
 }

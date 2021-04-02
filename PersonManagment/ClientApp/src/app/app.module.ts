@@ -14,6 +14,7 @@ import { PaymentsModule } from './payments/payments.module';
 import { ReportingModule } from './reporting/reporting.module';
 import { AdminModule } from './admin/admin.module';
 import { RequestModule } from './request/request.module'; 
+import { BusinessProcessModule } from './business-process/business-process.module'; 
 
 import { LoginModule } from './login-page/login.module';
 import { TokenInterceptor } from './shared/interceptors/token.interceptor';
@@ -38,6 +39,7 @@ import { environment } from '../environments/environment';
     SharedModule,
     OverviewModule,
     PersonnelModule,
+    BusinessProcessModule,
     SalaryModule,
     RequestModule, 
     PaymentsModule,

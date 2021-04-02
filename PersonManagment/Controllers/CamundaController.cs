@@ -15,31 +15,20 @@ namespace PersonManagment.Controllers
     public class CamundaController : ControllerBase
     {
         private readonly CamundaData _repository;
-        //private CamundaEngineClient camunda;
         public CamundaController(ApplicationDbContext context)
         {
             _repository = new CamundaData(context);
-
-            //camunda = new CamundaEngineClient(new Uri("http://localhost:8080/engine-rest/engine/default/"), null, null);
         }
 
         [HttpPost]
-        [Route("DeployAndStartWorkers")]
-        public IActionResult DeployAndStartWorkers(string processDefinitionKey)
+        [Route("StartProcess")]
+        public IActionResult StartProcess(string processName)
         {
             try
             {
-                _repository.DeployModel();
-                _repository.RegisterWorker();
+                var res = _repository.StartProcess(processName);
 
-                // start some instances:
-                string processInstanceId = _repository.camunda.BpmnWorkflowService.StartProcessInstance(processDefinitionKey, new Dictionary<string, object>()
-                    {
-                        {"someData", "..." }
-                    });
-                //Console.WriteLine($"Started {processDefinitionKey} {processInstanceId}");
-
-                return Ok(processInstanceId);
+                return Ok(res);
             }
             catch (Exception error)
             {
@@ -48,12 +37,12 @@ namespace PersonManagment.Controllers
         }
 
         [HttpPost]
-        [Route("StopTaskWorkers")]
-        public IActionResult StopTaskWorkers()
+        [Route("CompleteUserTask")]
+        public IActionResult CompleteUserTask(TaskModel taskModel)
         {
             try
             {
-                _repository.Shutdown(); // Stop Task Workers
+                _repository.CompleteUserTask(taskModel);
 
                 return Ok();
             }
@@ -63,35 +52,24 @@ namespace PersonManagment.Controllers
             }
         }
 
-        //[HttpPost]
-        //public async Task<IActionResult> SubcribeTopic(string topic)
-        //{
-        //    try
-        //    {
+        [HttpPost]
+        [Route("StopProcess")]
+        public IActionResult StopProcess()
+        {
+            try
+            {
+                _repository.StopProcess(); // Stop Task Workers
 
-        //        return Ok();
-        //    }
-        //    catch (Exception error)
-        //    {
-        //        return BadRequest(error);
-        //    }
-        //}
-
-        //[HttpPost]
-        //public async Task<IActionResult> CompleteTask(string processId, string taskId)
-        //{
-        //    try
-        //    {
-               
-
-        //        return Ok();
-        //    }
-        //    catch (Exception error)
-        //    {
-        //        return BadRequest(error);
-        //    }
-        //}
+                return Ok();
+            }
+            catch (Exception error)
+            {
+                return BadRequest(error);
+            }
+        }
 
        
+
+
     }
 }

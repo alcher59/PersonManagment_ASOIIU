@@ -24,7 +24,6 @@ import { ScheduleComponent } from './schedule/schedule.component';
 import { OrganizationalStructureComponent } from './organizational-structure/organizational-structure.component';
 
 
-
 @NgModule({
   declarations: [PersonnelPageComponent, CreateEmployeeComponent, EmployeesComponent, PersonalDataFormComponent, PositionsListComponent, RecruitmentComponent, VacationComponent, SickLeaveComponent, EmployeeTransferComponent, WorkTripComponent, ChangeWagesComponent, ContractComponent, DismissalComponent, StaffingTableComponent, ScheduleComponent, OrganizationalStructureComponent],
   imports: [

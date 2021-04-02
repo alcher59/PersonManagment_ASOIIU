@@ -12,7 +12,7 @@ namespace PersonManagment.Data.DataModel
         [Required]
         public string Name { get; set; }
         public bool Deleted { get; set; }
-        public ICollection<Employee> Employees { get; set; }
+        //public ICollection<Employee> Employees { get; set; }
         public ICollection<Recruitment> Recruitment { get; set; }
         public ICollection<Experience> Experience { get; set; }
 

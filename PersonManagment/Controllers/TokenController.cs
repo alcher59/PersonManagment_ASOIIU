@@ -58,17 +58,6 @@ namespace PersonManagment.Controllers
             if (resultRegistration)
             {
                 return Ok(200);
-                //var result = await _auth.Auth(data.userName, data.password);
-
-                //if (result != null)
-                //{
-                //    return Ok(result);
-
-                //}
-                //else
-                //{
-                //    return BadRequest();
-                //}
             }
             else
             {
