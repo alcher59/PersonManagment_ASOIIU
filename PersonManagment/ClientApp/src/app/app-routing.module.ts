@@ -82,7 +82,7 @@ const routes: Routes = [
       { path: 'personnel/employee/dismissal/:id', component:DismissalComponent, canActivate: [AuthorizeGuard] },
       { path: 'personnel/organizational-structure', component:OrganizationalStructureComponent, canActivate: [AuthorizeGuard] },
 
-      { path: 'business-process', component: BusinessProcessPageComponent, canActivate: [AuthorizeGuard] },
+      { path: 'business-process', component: BusinessProcessPageComponent, canActivate: [AuthorizeGuard] }
     ]
   }
 ];

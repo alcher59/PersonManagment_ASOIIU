@@ -29,6 +29,14 @@ export class BusinessProcessService {
     };
   }
 
+  startProcess(processName: string, data: any): Observable<any> {
+      return this.http.post(`/api/Camunda/StartProcess?processName=${processName}`, data)
+      .pipe(tap(x => x),
+        catchError(err => {  
+          console.log(err); 
+          return throwError(err);
+      }));
+    }
   getEmployees(): Observable<any[]> {
     return this.http.get<any[]>('/api/employees')
   }

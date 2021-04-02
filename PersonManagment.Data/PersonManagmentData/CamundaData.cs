@@ -73,8 +73,7 @@ namespace PersonManagment.Data.PersonManagmentData
             {
                 variables.Add(v.key, v.value);
             }
-            //variables.Add("emp", "false");
-            //variables.Add("militaryDoc", "true");
+           
             camunda.HumanTaskService.Complete(taskId, variables);
         }
 
@@ -123,12 +122,25 @@ namespace PersonManagment.Data.PersonManagmentData
 
             //    camunda.ExternalTaskService.Complete(workerId, externalTask.Id);
             //});
-            registerWorkers("printContract", externalTask =>
+            registerWorkers("createContract", externalTask =>
             {
                 camunda.ExternalTaskService.Complete(workerId, externalTask.Id);
             });
-            registerWorkers("printRecruitment", externalTask =>
+            registerWorkers("printContract", externalTask =>
             {
+                HttpWebRequest getRequest = (HttpWebRequest)WebRequest.Create($"http://localhost:63578/api/Doc/ExportContractDoc/49");
+
+                getRequest.Method = Http.Get;
+
+                var getResponse = (HttpWebResponse)getRequest.GetResponse();
+
+                //Stream newStream = getResponse.GetResponseStream();
+
+                //StreamReader sr = new StreamReader(newStream);
+
+                //var result = sr.ReadToEnd();
+
+                //IEnumerable<EmployeeDataModel> deserializedObjects = JsonConvert.DeserializeObject<IEnumerable<EmployeeDataModel>>(result);
                 camunda.ExternalTaskService.Complete(workerId, externalTask.Id);
             });
             StartPolling();
