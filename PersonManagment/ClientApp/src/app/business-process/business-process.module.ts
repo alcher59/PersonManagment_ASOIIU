@@ -7,10 +7,10 @@ import { NgGanttEditorModule } from 'ng-gantt';
 
 import { SharedModule } from '../shared/shared.module';
 import { BusinessProcessPageComponent } from './bp-page/bp-page.component';
-
+import { InstanceComponent } from './instance/instance.component';
 
 @NgModule({
-  declarations: [BusinessProcessPageComponent],
+  declarations: [BusinessProcessPageComponent, InstanceComponent],
   imports: [
     CommonModule,
     RouterModule,

@@ -36,6 +36,38 @@ namespace PersonManagment.Controllers
             }
         }
 
+        [Route("GetProcessInstances")]
+        [HttpGet]
+        public IActionResult GetProcessInstances()
+        {
+            try
+            {
+                var res = _repository.GetProcessInstances();
+
+                return Ok(res);
+            }
+            catch (Exception error)
+            {
+                return BadRequest(error);
+            }
+        }
+
+        [Route("GetUserTasks")]
+        [HttpGet]
+        public IActionResult GetUserTasks(string processInstanceId)
+        {
+            try
+            {
+                var res = _repository.GetUserTasks(processInstanceId);
+
+                return Ok(res);
+            }
+            catch (Exception error)
+            {
+                return BadRequest(error);
+            }
+        }
+
         [HttpPost]
         [Route("CompleteUserTask")]
         public IActionResult CompleteUserTask(TaskModel taskModel)

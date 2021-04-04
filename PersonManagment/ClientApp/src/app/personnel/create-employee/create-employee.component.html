@@ -3,8 +3,8 @@
     <h4>{{title}}</h4>
     <div class="example-button-row">
       <button mat-flat-button color="primary" type="submit">Сохранить</button>
-      <button mat-flat-button color="accent" type="button" [matMenuTriggerFor]="menu" *ngIf="!isNew">Оформить документ</button>
-        <mat-menu #menu="matMenu">
+      <button mat-flat-button color="accent" type="button" [matMenuTriggerFor]="docMenu" *ngIf="!isNew">Оформить документ</button>
+        <mat-menu #docMenu="matMenu">
             <button mat-menu-item color="accent" (click)="ToVacation()" >Отпуск</button>
             <button mat-menu-item color="accent" (click)="ToLeave()" >Больничный лист</button>
             <button mat-menu-item color="accent" (click)="ToEmployeeTransfer()">Кадровый перевод</button>
@@ -12,6 +12,11 @@
             <button mat-menu-item color="accent" (click)="ToChangeWages()">Изменение оплаты труда</button>
             <button mat-menu-item color="accent" (click)="ToWorkTrip()">Коммандировка</button>
             <button mat-menu-item color="accent" (click)='ToDismissal()'>Приказ об увольнении</button>
+        </mat-menu>
+        <button mat-flat-button color="accent" type="button" [matMenuTriggerFor]="bpMenu" *ngIf="!isNew">Запустить бизнес-процесс</button>
+        <mat-menu #bpMenu="matMenu">
+            <button mat-menu-item color="accent" (click)="StartBusinessProcess()" >Трудоустройство</button>
+            <button mat-menu-item color="accent" (click)="StartBusinessProcess()" >Увольнение</button>
         </mat-menu>
       <button mat-flat-button color="warn" type="button" (click)="delete()" *ngIf="!isNew">Удалить</button>
     </div>
@@ -33,7 +38,7 @@
               <span *ngIf="form.get('general').get('name').errors.required">Это поле не может быть пустым.</span>
             </mat-error>
           </mat-form-field>
-          <mat-form-field appearance="outline" style="padding-left: 10px;" class="form-width">
+          <mat-form-field appearance="outline" class="form-width">
             <mat-label>Отчество</mat-label>
             <input matInput placeholder="Отчество" formControlName='patronymic'>
             <mat-error *ngIf="form.get('general').get('patronymic').invalid && form.get('general').get('patronymic').touched">

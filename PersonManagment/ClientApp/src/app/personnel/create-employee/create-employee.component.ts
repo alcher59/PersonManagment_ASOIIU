@@ -4,6 +4,7 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 import { Observable, of } from 'rxjs';
 
 import { PersonnelService } from '../personnel.service';
+import { BusinessProcessService } from 'src/app/business-process/business-process.service';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { switchMap } from 'rxjs/operators';
 import { HttpResponse } from '@angular/common/http';
@@ -34,8 +35,9 @@ export class CreateEmployeeComponent implements OnInit, AfterViewInit, OnDestroy
   title: string = 'Сотрудник(создание)';
   isNew = true;
   employee: any;
+  processName: any;
 
-  constructor(private service: PersonnelService, private router: Router, private _snackBar: MatSnackBar, private route: ActivatedRoute) { }
+  constructor(private service: PersonnelService, private bpservice: BusinessProcessService, private router: Router, private _snackBar: MatSnackBar, private route: ActivatedRoute) { }
   
   ngOnDestroy(): void {
 
@@ -116,6 +118,7 @@ export class CreateEmployeeComponent implements OnInit, AfterViewInit, OnDestroy
       (employee: any) => {
         if (employee) {
           this.employee = employee;
+          this.processName =  'Recruitment';
           this.title = `Сотрудник: ${this.employee.FullName}`;
 
           const fullName: string = this.employee.FullName;
@@ -329,6 +332,23 @@ export class CreateEmployeeComponent implements OnInit, AfterViewInit, OnDestroy
   }
   ToDismissal() {
     this.router.navigate([`/personnel/employee/dismissal/${this.employee.Id}`])
+  }
+
+  StartBusinessProcess(){
+    this.form.disable();
+    this.bpservice.startProcess(this.processName).subscribe((processName: any) =>{
+      this.form.enable();
+      this._snackBar.open(`Процесс ${processName} запущен`, 'Уведомление', {
+        duration: 2000,
+      });
+    }, 
+      error => {
+        this.form.enable();
+        this._snackBar.open('Ошибка запуска процесса', 'Уведомление', {
+          duration: 2000,
+        });
+      }
+    );
   }
 
   exportContract() {

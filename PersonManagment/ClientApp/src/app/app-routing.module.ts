@@ -34,7 +34,7 @@ import { RequestsComponent } from './request/requests/requests.component';
 import { CreateRequestComponent } from './request/create-request/create-request.component';
 import { OrganizationalStructureComponent } from './personnel/organizational-structure/organizational-structure.component';
 import { BusinessProcessPageComponent } from './business-process/bp-page/bp-page.component';
-
+import { InstanceComponent } from './business-process/instance/instance.component';
 
 const routes: Routes = [
   {
@@ -82,7 +82,8 @@ const routes: Routes = [
       { path: 'personnel/employee/dismissal/:id', component:DismissalComponent, canActivate: [AuthorizeGuard] },
       { path: 'personnel/organizational-structure', component:OrganizationalStructureComponent, canActivate: [AuthorizeGuard] },
 
-      { path: 'business-process', component: BusinessProcessPageComponent, canActivate: [AuthorizeGuard] }
+      { path: 'business-process', component: BusinessProcessPageComponent, canActivate: [AuthorizeGuard] },
+      { path: 'business-process/instance/:processInstanceId', component: InstanceComponent, canActivate: [AuthorizeGuard] }
     ]
   }
 ];

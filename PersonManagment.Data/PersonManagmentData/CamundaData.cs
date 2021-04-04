@@ -177,9 +177,60 @@ namespace PersonManagment.Data.PersonManagmentData
             //camunda.RepositoryService.DeleteDeployment(deploymentId);
         }
 
-        
+        public IEnumerable<InstancesModel> GetProcessInstances()
+        {
+            var definitions = camunda.RepositoryService.LoadProcessDefinitions(true);
+
+            var instances = new List<ProcessInstance>();
+            var res = new List<InstancesModel>();
+
+            foreach (var def in definitions)
+            {
+                instances = (List<ProcessInstance>)camunda.BpmnWorkflowService.LoadProcessInstances(new Dictionary<string, string>() {
+                        { "processDefinitionId", def.Id }
+                    });
+
+                foreach (var i in instances)
+                {
+                    res.Add(new InstancesModel()
+                    {
+                        processInstanceId = i.Id,
+                        processName = def.Name
+                    });
+                }
+            }
+           
+            return res;
+        }
+
+        public IEnumerable<TaskModel> GetUserTasks(string processInstanceId)
+        {
+            var res = new List<TaskModel>();
+
+            var tasks = camunda.HumanTaskService.LoadTasks(new Dictionary<string, string>() {
+                        { "processInstanceId", processInstanceId }
+                    });
+
+            foreach(var task in tasks)
+            {
+                res.Add(new TaskModel()
+                {
+                    taskName = task.Name,
+                    processInstanceId = task.ProcessInstanceId
+                });
+            }
+
+            return res;
+        }
     }
 
+
+    public class InstancesModel
+    {
+        public string processInstanceId { get; set; } 
+
+        public string processName { get; set; } //process name
+    }
     public class TaskModel
     {
         public string processInstanceId { get; set; }
