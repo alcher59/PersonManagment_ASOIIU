@@ -42,16 +42,24 @@ export class BusinessProcessService {
       return this.http.get<any[]>('/api/Camunda/GetProcessInstances')
     }  
 
+    getInstance(processInstanceId: string): any {
+      return this.http.get<any>(`api/Camunda/GetProcessInstance?processInstanceId=${processInstanceId}`)
+    }
+
     getTasks(processInstanceId: string): Observable<any[]> {
       return this.http.get<any[]>(`/api/Camunda/GetUserTasks?processInstanceId=${processInstanceId}`)
     } 
 
-    completeTask(data: any) {
-      this.http.post('/api/Camunda/CompleteUserTask', data)
+    completeTask(taskId: string): any {
+      return this.http.post('/api/Camunda/CompleteUserTask/', taskId)
       .pipe(tap(x => x),
         catchError(err => {  
           console.log(err); 
           return throwError(err);
       }));
+    }
+
+    getDiagramm(processDefinitionId: string): any{
+      return this.http.get(`/api/Camunda/GetProcessInstanceXML?processDefinitionId=${processDefinitionId}`);
     }
 }

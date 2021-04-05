@@ -45,9 +45,9 @@ namespace PersonManagment.Data.PersonManagmentData
             // start some instances:
             string processInstanceId = camunda.BpmnWorkflowService.StartProcessInstance(processName, new Dictionary<string, object>()
                     {
-                        //{"militaryDoc", "true" },
-                        //{"man", "true" },
-                        //{"emp", "false" }
+                        {"militaryDoc", "true" },
+                        {"man", "true" },
+                        {"emp", "false" }
                         //{"test", "false" }
                     });
             var definitions = camunda.RepositoryService.LoadProcessDefinitions(true);
@@ -57,40 +57,6 @@ namespace PersonManagment.Data.PersonManagmentData
                         {"processInstanceId", processInstanceId }
                     };
         }
-        public void CompleteUserTask(TaskModel taskInfo)
-        {
-            var tasks = camunda.HumanTaskService.LoadTasks();
-            var taskId = string.Empty;
-            for (int i = 0; i < tasks.Count; i++)
-            {
-                if (tasks[i].Name == taskInfo.taskName && tasks[i].ProcessInstanceId == taskInfo.processInstanceId)
-                {
-                    taskId = tasks[i].Id;
-                }
-            }
-            var variables = camunda.HumanTaskService.LoadVariables(taskId);
-            foreach(var v in taskInfo.variables)
-            {
-                variables.Add(v.key, v.value);
-            }
-           
-            camunda.HumanTaskService.Complete(taskId, variables);
-        }
-
-        //public void start_test(string nameDefinition)
-        //{
-        //    var processDefinitions = camunda.RepositoryService.LoadProcessDefinitions(true);
-        //    ProcessDefinition processDefinition = new ProcessDefinition();
-        //    foreach (var def in processDefinitions)
-        //    {
-        //        if (def.Name == nameDefinition) processDefinition = def;
-        //    }
-        //    if (processDefinition == null || processDefinition.StartFormKey == null)
-        //    {
-        //        return;
-        //    }
-        //    Activator.CreateInstance(Type.GetType(processDefinition.StartFormKey));
-        //}
 
         public string DeployModel(string processName)
         {
@@ -104,43 +70,12 @@ namespace PersonManagment.Data.PersonManagmentData
 
         public void RegisterWorker()
         {
-            //registerWorkers("GetEmployees", externalTask =>
-            //{
-            //    //HttpWebRequest getRequest = (HttpWebRequest)WebRequest.Create("http://localhost:63578/api/Employees");
-
-            //    //getRequest.Method = Http.Get;
-
-            //    //var getResponse = (HttpWebResponse)getRequest.GetResponse();
-
-            //    //Stream newStream = getResponse.GetResponseStream();
-
-            //    //StreamReader sr = new StreamReader(newStream);
-
-            //    //var result = sr.ReadToEnd();
-
-            //    //IEnumerable<EmployeeDataModel> deserializedObjects = JsonConvert.DeserializeObject<IEnumerable<EmployeeDataModel>>(result);
-
-            //    camunda.ExternalTaskService.Complete(workerId, externalTask.Id);
-            //});
             registerWorkers("createContract", externalTask =>
             {
                 camunda.ExternalTaskService.Complete(workerId, externalTask.Id);
             });
             registerWorkers("printContract", externalTask =>
             {
-                HttpWebRequest getRequest = (HttpWebRequest)WebRequest.Create($"http://localhost:63578/api/Doc/ExportContractDoc/49");
-
-                getRequest.Method = Http.Get;
-
-                var getResponse = (HttpWebResponse)getRequest.GetResponse();
-
-                //Stream newStream = getResponse.GetResponseStream();
-
-                //StreamReader sr = new StreamReader(newStream);
-
-                //var result = sr.ReadToEnd();
-
-                //IEnumerable<EmployeeDataModel> deserializedObjects = JsonConvert.DeserializeObject<IEnumerable<EmployeeDataModel>>(result);
                 camunda.ExternalTaskService.Complete(workerId, externalTask.Id);
             });
             StartPolling();
@@ -203,6 +138,22 @@ namespace PersonManagment.Data.PersonManagmentData
             return res;
         }
 
+        public object GetProcessInstance(string processInstanceId)
+        {
+            HttpWebRequest getRequest = (HttpWebRequest)WebRequest.Create($"http://localhost:8080/engine-rest/history/process-instance/{processInstanceId}");
+            getRequest.Method = Http.Get;
+            var getResponse = (HttpWebResponse)getRequest.GetResponse();
+            StreamReader sr = new StreamReader(getResponse.GetResponseStream());
+            return JsonConvert.DeserializeObject(sr.ReadToEnd());
+        }
+
+        public string GetProcessInstanceXML(string processDefinitionId)
+        {
+            var def = camunda.RepositoryService.LoadProcessDefinitionXml(processDefinitionId);
+
+            return def;
+        }
+
         public IEnumerable<TaskModel> GetUserTasks(string processInstanceId)
         {
             var res = new List<TaskModel>();
@@ -215,12 +166,28 @@ namespace PersonManagment.Data.PersonManagmentData
             {
                 res.Add(new TaskModel()
                 {
+                    taskId = task.Id,
                     taskName = task.Name,
                     processInstanceId = task.ProcessInstanceId
                 });
             }
 
             return res;
+        }
+
+        public void CompleteUserTask(string taskId)
+        {
+            //var tasks = camunda.HumanTaskService.LoadTasks();
+            //var taskId = string.Empty;
+            //for (int i = 0; i < tasks.Count; i++)
+            //{
+            //    if (tasks[i].Name == taskInfo.taskName && tasks[i].ProcessInstanceId == taskInfo.processInstanceId)
+            //    {
+            //        taskId = tasks[i].Id;
+            //    }
+            //}
+            //var variables = camunda.HumanTaskService.LoadVariables(taskId);
+            camunda.HumanTaskService.Complete(taskId, new Dictionary<string, object>() { });
         }
     }
 
@@ -229,13 +196,15 @@ namespace PersonManagment.Data.PersonManagmentData
     {
         public string processInstanceId { get; set; } 
 
-        public string processName { get; set; } //process name
+        public string processName { get; set; } 
     }
     public class TaskModel
     {
         public string processInstanceId { get; set; }
 
         public string taskName { get; set; }
+
+        public string taskId { get; set; }
 
         public VariablesModel[] variables { get; set; }
 

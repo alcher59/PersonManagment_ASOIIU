@@ -338,7 +338,7 @@ export class CreateEmployeeComponent implements OnInit, AfterViewInit, OnDestroy
     this.form.disable();
     this.bpservice.startProcess(this.processName).subscribe((processName: any) =>{
       this.form.enable();
-      this._snackBar.open(`Процесс ${processName} запущен`, 'Уведомление', {
+      this._snackBar.open(`Процесс запущен`, 'Уведомление', {
         duration: 2000,
       });
     }, 

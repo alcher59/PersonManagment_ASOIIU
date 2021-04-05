@@ -52,6 +52,38 @@ namespace PersonManagment.Controllers
             }
         }
 
+        [Route("GetProcessInstance")]
+        [HttpGet]
+        public IActionResult GetProcessInstance(string processInstanceId)
+        {
+            try
+            {
+                var res = _repository.GetProcessInstance(processInstanceId);
+
+                return Ok(res);
+            }
+            catch (Exception error)
+            {
+                return BadRequest(error);
+            }
+        }
+
+        [Route("GetProcessInstanceXML")]
+        [HttpGet]
+        public IActionResult GetProcessInstanceXML(string processDefinitionId)
+        {
+            try
+            {
+                var res = _repository.GetProcessInstanceXML(processDefinitionId);
+
+                return Ok(res);
+            }
+            catch (Exception error)
+            {
+                return BadRequest(error);
+            }
+        }
+
         [Route("GetUserTasks")]
         [HttpGet]
         public IActionResult GetUserTasks(string processInstanceId)
@@ -70,11 +102,11 @@ namespace PersonManagment.Controllers
 
         [HttpPost]
         [Route("CompleteUserTask")]
-        public IActionResult CompleteUserTask(TaskModel taskModel)
+        public IActionResult CompleteUserTask(string taskId)
         {
             try
             {
-                _repository.CompleteUserTask(taskModel);
+                _repository.CompleteUserTask(taskId);
 
                 return Ok();
             }

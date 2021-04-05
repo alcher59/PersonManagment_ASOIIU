@@ -23,10 +23,11 @@ export class InstanceComponent implements OnInit {
   displayedColumns: string[] = ['taskName'];
   dataSource = new MatTableDataSource<any>();
   processInstanceId: string;
-  taskName: string;
+  instance$: any;
+  taskId$: string;
   taskData: any;
   title: string = 'БП';
-
+  processXML: string;
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
   
@@ -47,6 +48,16 @@ export class InstanceComponent implements OnInit {
           return of(null)
         })
       );
+
+      this.instance$ = this.route.params.pipe(
+        switchMap((params: Params) => {
+          if (params['processInstanceId']) {
+            this.processInstanceId = params['processInstanceId'];
+            return this.service.getInstance(params['processInstanceId']);
+          } 
+          return of(null)
+        })
+      );
       this.sub$ = this.tasks$.subscribe(
         (data) => {
           if (data) {
@@ -59,16 +70,22 @@ export class InstanceComponent implements OnInit {
       }, 
         (error) => this._snackBar.open(error.error.message)
       );
+      this.instance$.subscribe(
+        (data) => {
+          if (data) {
+            this.title = 'БП: ' + data.processDefinitionName;
+          } 
+          
+          this.form.enable();
+      }, 
+        (error) => this._snackBar.open(error.error.message)
+      );
   }
   submit(){
     let obs$;
-    this.taskData = this.taskName, this.processInstanceId;
-      obs$ = this.service.completeTask(this.taskData);
+    obs$ = this.service.completeTask(this.taskId$);
     if (obs$) {
       // this.form.disable();
-
-      
-     
       obs$.subscribe(() =>{
         this.form.enable();
         this._snackBar.open('Задача завершена', 'Выполнение', {
@@ -85,7 +102,7 @@ export class InstanceComponent implements OnInit {
      
     }
     else{
-      this._snackBar.open('Заполните поля', 'Сохранение', {
+      this._snackBar.open('Задача не выбрана', 'Выполнение', {
         duration: 2000,
       });
     }
@@ -109,6 +126,6 @@ export class InstanceComponent implements OnInit {
 
   selectRow(row){
     row.highlighted = !row.highlighted;
-    this.taskName = row.taskName;
+    this.taskId$ = row.taskId;
   }
 }
