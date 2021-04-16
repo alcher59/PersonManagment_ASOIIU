@@ -163,7 +163,8 @@ namespace PersonManagment.Data.PersonManagmentData
 
         public string GetProcessInstanceXML(string processDefinitionId)
         {
-            return camunda.RepositoryService.LoadProcessDefinitionXml(processDefinitionId);
+            var res = camunda.RepositoryService.LoadProcessDefinitionXml(processDefinitionId);
+            return res;
         }
 
         public IEnumerable<TaskModel> GetUserTasks(string processInstanceId)

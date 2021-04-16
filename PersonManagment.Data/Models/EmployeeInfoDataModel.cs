@@ -6,6 +6,7 @@
         public string FullName { get; set; }
         public string PersonnelNumber { get; set; }
         public PersonData PersonData { get; set; }
+        public int Status { get; set; }
     }
 
     public class PersonData

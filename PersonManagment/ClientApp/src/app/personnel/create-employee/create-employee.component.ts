@@ -113,16 +113,6 @@ export class CreateEmployeeComponent implements OnInit, AfterViewInit, OnDestroy
       switchMap((params: Params) => {
         if (params['id']) {
           this.isNew = false;
-          this.recruitment = {
-            "processName": 'Recruitment',
-            "topicNames": [],
-            "variables": {"fullName": params['fullName']}
-          };
-          this.dismissal = {
-            "processName": 'Dismissal',
-            "topicNames": [],
-            "variables": {"fullName": params['fullName']}
-          };
           return this.service.getEmployee(params['id']);
         } 
         return of(null)
@@ -131,9 +121,19 @@ export class CreateEmployeeComponent implements OnInit, AfterViewInit, OnDestroy
       (employee: any) => {
         if (employee) {
           this.employee = employee;
-          this.status = this.employee.Status;
           this.title = `Сотрудник: ${this.employee.FullName}`;
-
+          this.status = this.employee.Status;
+          
+          this.recruitment = {
+            "processName": 'Recruitment',
+            "topicNames": [],
+            "variables": {"empId": employee.Id, "fullName": this.title}
+          };
+          this.dismissal = {
+            "processName": 'Dismissal',
+            "topicNames": [],
+            "variables": {"empId": employee.Id, "fullName": this.title}
+          };
           const fullName: string = this.employee.FullName;
           const nameParts = fullName.split(' ');
 
@@ -162,7 +162,7 @@ export class CreateEmployeeComponent implements OnInit, AfterViewInit, OnDestroy
           this.form.get('education').patchValue({
 
           })
-
+          
           
         } 
         this.form.enable();
@@ -351,61 +351,69 @@ export class CreateEmployeeComponent implements OnInit, AfterViewInit, OnDestroy
 
   
 
-  StartBusinessProcess(data: any){
-    this.form.disable();
-    switch(data)
-    {
-      case this.recruitment:{
-        if(this.status == 1 || this.status == 2)
+  StartBusinessProcess(processName: string){
+    this.bpservice.getInstances().subscribe((data: any) => {
+      if(!data.some(x => x.description.empId.value === this.employee.Id))
+      {
+        this.form.disable();
+        switch(processName)
         {
-          this.bpservice.startProcess(data).subscribe(() =>{
-            this.form.enable();
-            this._snackBar.open(`Процесс запущен. Для просмотра откройте вкладку "Бизнес-процессы"`, 'Уведомление', {
-              duration: 4000,
-            });
-          }, 
-            error => {
-              this.form.enable();
-              this._snackBar.open('Ошибка запуска процесса', 'Уведомление', {
+          case 'Recruitment':{
+            if(this.status == 1 || this.status == 3)
+            {
+              this.bpservice.startProcess(this.recruitment).subscribe(() =>{
+                this._snackBar.open(`Процесс запущен. Для просмотра откройте вкладку "Бизнес-процессы"`, 'Уведомление', {
+                  duration: 4000,
+                });
+              }, 
+                error => {
+                  this._snackBar.open('Ошибка запуска процесса', 'Уведомление', {
+                    duration: 4000,
+                  });
+                }
+              );
+            }
+            else 
+            {
+              this._snackBar.open('Сотрудник уже устроен', 'Ошибка', {
                 duration: 4000,
               });
             }
-          );
-        }
-        else 
-        {
-          this._snackBar.open('Сотрудник уже устроен', 'Ошибка', {
-            duration: 4000,
-          });
-        }
-        break;
-      }
-      case this.dismissal:{
-        if(this.status == 2)
-        {
-          this.bpservice.startProcess(data).subscribe(() =>{
-            this.form.enable();
-            this._snackBar.open(`Процесс запущен. Для просмотра откройте вкладку "Бизнес-процессы"`, 'Уведомление', {
-              duration: 4000,
-            });
-          }, 
-            error => {
-              this.form.enable();
-              this._snackBar.open('Ошибка запуска процесса', 'Уведомление', {
+            break;
+          }
+          case 'Dismissal':{
+            if(this.status == 2)
+            {
+              this.bpservice.startProcess(this.dismissal).subscribe(() =>{
+                this._snackBar.open(`Процесс запущен. Для просмотра откройте вкладку "Бизнес-процессы"`, 'Уведомление', {
+                  duration: 4000,
+                });
+              }, 
+                error => {
+                  this._snackBar.open('Ошибка запуска процесса', 'Уведомление', {
+                    duration: 4000,
+                  });
+                }
+              );
+            }
+            else 
+            {
+              this._snackBar.open('Сотрудник еще не устроен', 'Ошибка', {
                 duration: 4000,
               });
             }
-          );
+            break;
+          }
         }
-        else 
-        {
-          this._snackBar.open('Сотрудник еще не устроен', 'Ошибка', {
-            duration: 4000,
-          });
-        }
-        break;
+        this.form.enable();
       }
-    }
+      else 
+      {
+        this._snackBar.open('На данного сотрудника уже запущен процесс трудоустройства/увольнения', 'Ошибка', {
+          duration: 4000,
+        });
+      }
+    });
   }
 
   exportContract() {

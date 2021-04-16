@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormControl,Validators } from '@angular/forms';
-import { HttpResponse } from '@angular/common/http';
 import { from, Observable, of, Subscription } from 'rxjs';
 import {MatSnackBar} from '@angular/material/snack-bar';
 
@@ -21,10 +20,7 @@ import {
   EventEmitter
 } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { catchError } from 'rxjs/operators';
-import * as BpmnJS from 'bpmn-js/dist/bpmn-modeler.production.min.js';
-// import { importDiagram } from './rx';
-import { throwError } from 'rxjs';
+import * as BpmnJS from 'bpmn-js/dist/bpmn-viewer.production.min.js';
 
 @Component({
   selector: 'app-instance',
@@ -44,7 +40,7 @@ export class InstanceComponent implements OnInit, AfterContentInit, OnChanges, O
   title: string = 'БП:';
   description: string;
   processXML: string;
-  test: string = ``;
+  processDefinitionId: string = `Recruitment:2:2118e11c-9dd7-11eb-bedd-fcaa14b60bbd`;
   bpmnJS: BpmnJS;
   @ViewChild('ref', { static: true }) el: ElementRef;
   @Output() importDone: EventEmitter<any> = new EventEmitter();
@@ -59,7 +55,7 @@ export class InstanceComponent implements OnInit, AfterContentInit, OnChanges, O
     this.bpmnJS.on('import.done', ({ error }) => {
       if (!error) {
         this.bpmnJS.get('canvas').zoom('fit-viewport');
-        console.log("done!!!!");
+        console.log("done!");
       }
       else
         {
@@ -72,8 +68,8 @@ export class InstanceComponent implements OnInit, AfterContentInit, OnChanges, O
   ngOnInit(): void {
       this.form = new FormGroup({});
       this.form.disable();
-      // this.loadUrl();
-      // this.bpmnJS.attachTo(this.el.nativeElement);
+      this.loadUrl(this.processDefinitionId);
+      this.bpmnJS.attachTo(this.el.nativeElement);
       this.tasks$ = this.route.params.pipe(
         switchMap((params: Params) => {
           let param = params['processInstanceId'];
@@ -147,11 +143,10 @@ export class InstanceComponent implements OnInit, AfterContentInit, OnChanges, O
     }
   }
   
-  loadUrl(): any {
-    this.processXML = this.service.getDiagramm('Recruitment:1:ae2c26db-988a-11eb-8a18-fcaa14b60bbd');
-    
-    return (
-      this.importDiagram(this.processXML).subscribe(
+  loadUrl(processDefinitionId: string): any {
+    this.service.getDiagramm(processDefinitionId).subscribe(xml => {
+      return (
+      this.importDiagram(xml).subscribe(
         (warnings) => {
           this.importDone.emit({
             type: 'success',
@@ -165,9 +160,10 @@ export class InstanceComponent implements OnInit, AfterContentInit, OnChanges, O
           });
         }
       )
-    )
+    )});
+    
   }
-  private importDiagram(xml: string): Observable<{warnings: Array<any>}> {
+  importDiagram(xml: string): Observable<{warnings: Array<any>}> {
     return from(this.bpmnJS.importXML(xml) as Promise<{warnings: Array<any>}>);
   }
   ngOnDestroy(): void {

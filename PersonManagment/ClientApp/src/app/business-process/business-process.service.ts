@@ -63,7 +63,7 @@ export class BusinessProcessService {
       }
       else
       {
-        return ""; 
+        return "empty"; 
       }
     }
     completeTask(taskId: string): any {
@@ -76,8 +76,7 @@ export class BusinessProcessService {
     }
 
     getDiagramm(processDefinitionId: string): any{
-      return this.http.get(`/api/Camunda/GetProcessInstanceXML?processDefinitionId=${processDefinitionId}`)
-      .subscribe(result => console.log(result));
+      return this.http.get(`/api/Camunda/GetProcessInstanceXML?processDefinitionId=${processDefinitionId}`, { responseType: 'text'});
     }
 
     deleteProcessInstance(processInstanceId: string): any{

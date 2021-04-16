@@ -15,8 +15,8 @@
         </mat-menu>
         <button mat-flat-button color="accent" type="button" [matMenuTriggerFor]="bpMenu" *ngIf="!isNew">Запустить бизнес-процесс</button>
         <mat-menu #bpMenu="matMenu">
-            <button mat-menu-item color="accent" (click)="StartBusinessProcess(recruitment)" >Трудоустройство</button>
-            <button mat-menu-item color="accent" (click)="StartBusinessProcess(dismissal)" >Увольнение</button>
+            <button mat-menu-item color="accent" (click)="StartBusinessProcess('Recruitment')" >Трудоустройство</button>
+            <button mat-menu-item color="accent" (click)="StartBusinessProcess('Dismissal')" >Увольнение</button>
         </mat-menu>
       <button mat-flat-button color="warn" type="button" (click)="delete()" *ngIf="!isNew">Удалить</button>
     </div>
@@ -31,7 +31,7 @@
               <span *ngIf="form.get('general').get('surname').errors.required">Это поле не может быть пустым.</span>
             </mat-error>
           </mat-form-field>
-          <mat-form-field appearance="outline" style="padding-left: 10px;" class="form-width">
+          <mat-form-field appearance="outline" class="form-width">
             <mat-label>Имя</mat-label>
             <input matInput placeholder="Имя" formControlName='name'>
             <mat-error *ngIf="form.get('general').get('name').invalid && form.get('general').get('name').touched">

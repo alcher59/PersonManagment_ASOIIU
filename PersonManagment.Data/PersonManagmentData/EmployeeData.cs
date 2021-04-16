@@ -108,7 +108,8 @@ namespace PersonManagment.Data.PersonManagmentData
                 Id = x.Id,
                 FullName = x.FullName,
                 PersonnelNumber = x.PersonnelNumber,
-                PersonData = person
+                PersonData = person,
+                Status = x.Status.Id
             }).FirstOrDefault(y => y.Id == id);
 
             return res;

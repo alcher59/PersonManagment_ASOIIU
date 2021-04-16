@@ -20,7 +20,7 @@ import { MatSort } from '@angular/material/sort';
 export class BusinessProcessPageComponent implements OnInit {
   instances$: Observable<any[]>;
   sub$: Subscription;
-  displayedColumns: string[] = ['processName', 'processInstanceId', 'description'];
+  displayedColumns: string[] = ['processName', 'description', 'processInstanceId' ];
   dataSource = new MatTableDataSource<any>();
   description$: string;
 
