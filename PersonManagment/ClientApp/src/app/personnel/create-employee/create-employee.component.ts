@@ -36,7 +36,9 @@ export class CreateEmployeeComponent implements OnInit, AfterViewInit, OnDestroy
   isNew = true;
   employee: any;
   processName: any;
-
+  recruitment: any;
+  dismissal: any;
+  status: any;
   constructor(private service: PersonnelService, private bpservice: BusinessProcessService, private router: Router, private _snackBar: MatSnackBar, private route: ActivatedRoute) { }
   
   ngOnDestroy(): void {
@@ -100,6 +102,7 @@ export class CreateEmployeeComponent implements OnInit, AfterViewInit, OnDestroy
       }),
   
     });
+    
 
     this.form.disable();
 
@@ -110,6 +113,16 @@ export class CreateEmployeeComponent implements OnInit, AfterViewInit, OnDestroy
       switchMap((params: Params) => {
         if (params['id']) {
           this.isNew = false;
+          this.recruitment = {
+            "processName": 'Recruitment',
+            "topicNames": [],
+            "variables": {"fullName": params['fullName']}
+          };
+          this.dismissal = {
+            "processName": 'Dismissal',
+            "topicNames": [],
+            "variables": {"fullName": params['fullName']}
+          };
           return this.service.getEmployee(params['id']);
         } 
         return of(null)
@@ -118,7 +131,7 @@ export class CreateEmployeeComponent implements OnInit, AfterViewInit, OnDestroy
       (employee: any) => {
         if (employee) {
           this.employee = employee;
-          this.processName =  'Recruitment';
+          this.status = this.employee.Status;
           this.title = `Сотрудник: ${this.employee.FullName}`;
 
           const fullName: string = this.employee.FullName;
@@ -149,6 +162,8 @@ export class CreateEmployeeComponent implements OnInit, AfterViewInit, OnDestroy
           this.form.get('education').patchValue({
 
           })
+
+          
         } 
         this.form.enable();
     }, 
@@ -334,21 +349,63 @@ export class CreateEmployeeComponent implements OnInit, AfterViewInit, OnDestroy
     this.router.navigate([`/personnel/employee/dismissal/${this.employee.Id}`])
   }
 
-  StartBusinessProcess(){
+  
+
+  StartBusinessProcess(data: any){
     this.form.disable();
-    this.bpservice.startProcess(this.processName).subscribe((processName: any) =>{
-      this.form.enable();
-      this._snackBar.open(`Процесс запущен`, 'Уведомление', {
-        duration: 2000,
-      });
-    }, 
-      error => {
-        this.form.enable();
-        this._snackBar.open('Ошибка запуска процесса', 'Уведомление', {
-          duration: 2000,
-        });
+    switch(data)
+    {
+      case this.recruitment:{
+        if(this.status == 1 || this.status == 2)
+        {
+          this.bpservice.startProcess(data).subscribe(() =>{
+            this.form.enable();
+            this._snackBar.open(`Процесс запущен. Для просмотра откройте вкладку "Бизнес-процессы"`, 'Уведомление', {
+              duration: 4000,
+            });
+          }, 
+            error => {
+              this.form.enable();
+              this._snackBar.open('Ошибка запуска процесса', 'Уведомление', {
+                duration: 4000,
+              });
+            }
+          );
+        }
+        else 
+        {
+          this._snackBar.open('Сотрудник уже устроен', 'Ошибка', {
+            duration: 4000,
+          });
+        }
+        break;
       }
-    );
+      case this.dismissal:{
+        if(this.status == 2)
+        {
+          this.bpservice.startProcess(data).subscribe(() =>{
+            this.form.enable();
+            this._snackBar.open(`Процесс запущен. Для просмотра откройте вкладку "Бизнес-процессы"`, 'Уведомление', {
+              duration: 4000,
+            });
+          }, 
+            error => {
+              this.form.enable();
+              this._snackBar.open('Ошибка запуска процесса', 'Уведомление', {
+                duration: 4000,
+              });
+            }
+          );
+        }
+        else 
+        {
+          this._snackBar.open('Сотрудник еще не устроен', 'Ошибка', {
+            duration: 4000,
+          });
+        }
+        break;
+      }
+    }
   }
 
   exportContract() {

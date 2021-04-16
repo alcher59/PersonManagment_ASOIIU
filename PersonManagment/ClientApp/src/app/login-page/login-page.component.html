@@ -1,10 +1,12 @@
 <div class="login-container">
     <mat-card>
+        
         <form class="card" [formGroup]="form" (ngSubmit)="onSubmit()">
             <div class="app-name">
                 <div class="brand-logo"></div>
             </div>  
             <h4>Вход в систему</h4>
+            <!-- <mat-progress-bar mode="indeterminate"></mat-progress-bar> -->
             <mat-form-field class="example-full-width" appearance="outline">
                 <mat-label>Email</mat-label>
                 <input matInput placeholder="Email" formControlName="email"/>
@@ -23,9 +25,11 @@
                     </span>
                 </mat-error>
             </mat-form-field>
+            
             <div>
                 <button mat-flat-button color="primary" type="submit">Войти</button>
             </div>
+            
         </form>
     </mat-card>
 </div>

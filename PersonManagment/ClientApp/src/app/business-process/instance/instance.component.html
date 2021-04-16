@@ -1,47 +1,16 @@
 <div class="container">
-    <form class="card" [formGroup]="form" (ngSubmit)="submit()">
-      <h4>{{title}}</h4>
+    <!-- <form class="card" [formGroup]="form" (ngSubmit)="submit()"> -->
+    <h4>{{title}}
+        <button mat-flat-button class="btnDelete" color="warn" type="button" (click)="stopProcess()">Остановить процесс</button>
+    </h4>
+    
       <mat-tab-group animationDuration="0ms">
         <mat-tab label="Диаграмма">
-            <div class="content" id="js-drop-zone">
-				<div id="diagramCanvas"></div>
-			</div>
-
-			<script>
-				$(document).ready(function() {
-						    
-					var taskId = "9ebf63ad-948b-11eb-beb0-fcaa14b60bbd";				    
-                    var definitionId = "Recruitment:1:54ae23a5-93a4-11eb-beb0-fcaa14b60bbd";
-					var BpmnViewer = window.BpmnJS;
-					var viewer = new BpmnViewer({container: '#diagramCanvas', width: '100%', height: '100%'});
-
-					var container = $('#js-drop-zone');
-					// get the diagram
-					$.get('/engine-rest/task/' + taskId, function() {
-						$.get(`/engine-rest/process-definition/${definitionId}/xml`, function(data) {
-
-							// show it in bpmn.io
-							viewer.importXML(data.bpmn20Xml, function(err) {
-								if (err) {
-									console.log('error rendering', err);
-								} else {
-									var canvas = viewer.get('canvas');
-									// zoom to fit full viewport
-									canvas.zoom('fit-viewport');
-									container.removeClass('with-error')
-											 .addClass('with-diagram');
-									// add marker
-									canvas.addMarker('Recruitment', 'highlight');									
-								}
-							});
-						});
-					});
-				});
-			</script>
+            <!-- <div #ref class="diagram-container"></div> -->
         </mat-tab>
         <mat-tab label="Задачи">
             <div class="row" *ngIf="tasks$ | async as tasks; else loader">
-                <button mat-flat-button color="primary" type="submit" class="btnComplete">Завершить задачу</button>
+                <button mat-flat-button class="btnComplete" color="primary" type="button" (click)="submit()">Завершить задачу</button>
                 <div class="col s12">
                     <div *ngIf="tasks.length; else empty" class="table-container">
                         <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
@@ -60,21 +29,19 @@
                             <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="row-hover" [ngClass]="{'selected': row.highlighted}"
                             (click)="selectRow(row)"></tr>
             
-                            <tr class="mat-row" *matNoDataRow>
-                                <td class="mat-cell" colspan="4">No data matching the filter "{{input.value}}"</td>
-                            </tr>
                         </table>
                     </div>
                     <ng-template #empty>
-                        <div class="center">
-                            Задач пока нет
+                        <div class="center" *ngIf="tasks.length == 0; else ToBusinessProcess()">
+                            
                         </div>
                     </ng-template>
                 </div>
             </div>
         </mat-tab>
+        
       </mat-tab-group>
-    </form>
+    <!-- </form> -->
   </div>
 
   <ng-template #loader>

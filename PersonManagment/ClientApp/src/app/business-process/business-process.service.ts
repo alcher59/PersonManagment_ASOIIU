@@ -29,8 +29,8 @@ export class BusinessProcessService {
     };
   }
 
-    startProcess(processName: string): Observable<any> {
-      return this.http.post(`/api/Camunda/StartProcess?processName=${processName}`, {})
+    startProcess(data: any): Observable<any> {
+      return this.http.post(`/api/Camunda/StartProcess`, data)
       .pipe(tap(x => x),
         catchError(err => {  
           console.log(err); 
@@ -50,8 +50,24 @@ export class BusinessProcessService {
       return this.http.get<any[]>(`/api/Camunda/GetUserTasks?processInstanceId=${processInstanceId}`)
     } 
 
+    // getVariables(processInstanceId: string): any {
+    //   return this.http.get<any>(`api/Camunda/GetProcessVariables?processInstanceId=${processInstanceId}`)
+    // }
+
+    getEmployeeName(employeeId: number): string{
+      if(employeeId != -1)
+      {
+        this.http.get<any>(`api/Employees?id=${employeeId}`).subscribe((data: any) => {
+           return `Сотрудник: ${data.FullName}`;
+        });
+      }
+      else
+      {
+        return ""; 
+      }
+    }
     completeTask(taskId: string): any {
-      return this.http.post('/api/Camunda/CompleteUserTask/', taskId)
+      return this.http.post(`/api/Camunda/CompleteUserTask?taskId=${taskId}`, null)
       .pipe(tap(x => x),
         catchError(err => {  
           console.log(err); 
@@ -60,6 +76,11 @@ export class BusinessProcessService {
     }
 
     getDiagramm(processDefinitionId: string): any{
-      return this.http.get(`/api/Camunda/GetProcessInstanceXML?processDefinitionId=${processDefinitionId}`);
+      return this.http.get(`/api/Camunda/GetProcessInstanceXML?processDefinitionId=${processDefinitionId}`)
+      .subscribe(result => console.log(result));
+    }
+
+    deleteProcessInstance(processInstanceId: string): any{
+      return this.http.delete(`/api/Camunda/StopProcess?processInstanceId=${processInstanceId}`)
     }
 }

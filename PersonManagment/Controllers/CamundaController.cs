@@ -22,13 +22,29 @@ namespace PersonManagment.Controllers
 
         [HttpPost]
         [Route("StartProcess")]
-        public IActionResult StartProcess(string processName)
+        public IActionResult StartProcess(ProcessModel processModel)
         {
             try
             {
-                var res = _repository.StartProcess(processName);
+                var res = _repository.StartProcess(processModel);
 
                 return Ok(res);
+            }
+            catch (Exception error)
+            {
+                return BadRequest(error);
+            }
+        }
+
+        [HttpPost]
+        [Route("RegisterWorker")]
+        public IActionResult RegisterWorker(ProcessModel data)
+        {
+            try
+            {
+                _repository.RegisterWorker(data);
+
+                return Ok();
             }
             catch (Exception error)
             {
@@ -59,6 +75,22 @@ namespace PersonManagment.Controllers
             try
             {
                 var res = _repository.GetProcessInstance(processInstanceId);
+
+                return Ok(res);
+            }
+            catch (Exception error)
+            {
+                return BadRequest(error);
+            }
+        }
+
+        [Route("GetProcessVariables")]
+        [HttpGet]
+        public IActionResult GetProcessVariables(string processInstanceId)
+        {
+            try
+            {
+                var res = _repository.GetProcessVariables(processInstanceId);
 
                 return Ok(res);
             }
@@ -116,13 +148,13 @@ namespace PersonManagment.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpDelete]
         [Route("StopProcess")]
-        public IActionResult StopProcess()
+        public IActionResult StopProcess(string processInstanceId)
         {
             try
             {
-                _repository.StopProcess(); // Stop Task Workers
+                _repository.StopProcess(processInstanceId);
 
                 return Ok();
             }
